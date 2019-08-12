@@ -41,6 +41,16 @@ class Tyk:
             raise InvalidTykOperation(message=message)
         raise TykInternalError()
 
+    def set_password(self, dev_id, new_pass):
+        response = self._request_new_password(dev_id, new_pass)
+        if response.status_code == 200:
+            status = self._get_status(response)
+            return status
+        elif response.status_code == 400:
+            message = self._get_message(response)
+            raise InvalidTykOperation(message=message)
+        raise TykInternalError()
+
     def _request_create_developer(self, email, passwd, org_id, fields):
         url = self._get_url('developers')
         payload = {'email': email, 
@@ -61,8 +71,14 @@ class Tyk:
         url = self._get_url(endpoint)
         response = self._make_put_request(url)
         return response
-        
 
+    def _request_new_password(self, dev_id, new_pass):
+        endpoint = 'developers/password/%s' %(dev_id)
+        url = self._get_url(endpoint)
+        payload = { "password": new_pass }
+        response = self._make_post_request(url, payload)
+        return response
+        
     def _make_post_request(self, url, payload):
         json_payload = json.dumps(payload)
         try:
@@ -88,6 +104,11 @@ class Tyk:
         result = response.json()
         message = result['Message']
         return message
+
+    def _get_status(self, response):
+        result = response.json()
+        status = result['Status']
+        return status
 
     def _get_key(self, response):
         result = response.json()

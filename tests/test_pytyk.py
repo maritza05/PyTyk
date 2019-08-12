@@ -132,7 +132,31 @@ def test_approve_key_with_invalid_key(mock_get):
     tyk_client = Tyk(host='https://tyk.example.com', auth='valid_auth')
     key = tyk_client.approve_key('invalid_key')
 
+@patch('pytyk.services.requests.post')
+def test_set_password(mock_get):
+    result = {
+        "Status": "OK",
+        "Message": "Password changed",
+        "Meta": None
+    }
+    mock_get.return_value.status_code = 200
+    mock_get.return_value.json.return_value = result
+    tyk_client = Tyk(host='https://tyk.example.com', auth='valid_auth')
+    status = tyk_client.set_password('mydevid', 'mynewpass')
+    assert_equals(status, 'OK')
 
+@raises(InvalidTykOperation)
+@patch('pytyk.services.requests.post')
+def test_set_password_to_invalid_developer(mock_get):
+    result = {
+        "Status": "Error",
+        "Message": "Could not retrieve developer object",
+        "Meta": None
+    }
+    mock_get.return_value.status_code = 400
+    mock_get.return_value.json.return_value = result
+    tyk_client = Tyk(host='https://tyk.example.com', auth='valid_auth')
+    key = tyk_client.set_password('invalid_dev', 'mynewpass')
 
 
 
