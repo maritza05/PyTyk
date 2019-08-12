@@ -82,7 +82,7 @@ class Tyk:
             raise InvalidTykInstance()
 
     def _get_url(self, endpoint):
-        return urljoin(self.host, f'api/portal/{endpoint}')
+        return urljoin(self.host, 'api/portal/%s' %(endpoint))
 
     def _get_message(self, response):
         result = response.json()
