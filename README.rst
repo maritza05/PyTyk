@@ -26,8 +26,7 @@ A python package to handle the resources of the Tyk API Gateway
 Features
 --------
 
-* TODO
-
+* Replacing tyk requests with python functions
 Credits
 -------
 
